@@ -1,10 +1,8 @@
 const nav = [
   ["Today", "/today"],
-  ["Design", "/design"],
-  ["Circle", "/organizer"],
+  ["Report", "/report"],
   ["Journal", "/journal"],
   ["Coach", "/coach"],
-  ["Reports", "/reports"],
   ["Settings", "/settings"],
 ];
 

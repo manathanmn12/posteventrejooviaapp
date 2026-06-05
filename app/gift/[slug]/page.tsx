@@ -11,9 +11,9 @@ export default async function GiftPortal({ params }: { params: Promise<{ slug: s
         Thank you for bringing the reset to your event.
       </h1>
       <Card className="mt-8 text-sm leading-relaxed opacity-90">
-        Your guests took branded moments home. We made something for you that lasts longer — a
-        60-second daily practice built around how <em>you</em> are wired. And it&apos;s yours to
-        share: invite your team or family, and see how you work together.
+        Your guests took branded moments home. We made something for you that lasts longer — your
+        own design report, written from how <em>you</em> are wired, that deepens every day you use
+        it.
         <p className="mt-3 text-xs opacity-60">gift link: {slug} · event recap loads here (Phase 7)</p>
       </Card>
       <div className="mt-10 text-center">

@@ -10,8 +10,8 @@ export default function Reveal() {
         ≈20% of people. Your aura is focused and penetrating — you see systems and people clearly.
         Your strategy: wait to be recognized and invited.
       </p>
-      <a href="/today" className="mt-10 inline-block cta rounded-full px-8 py-3">
-        Begin your first alignment
+      <a href="/report" className="mt-10 inline-block cta rounded-full px-8 py-3">
+        Open your report
       </a>
       <p className="mt-3 text-xs opacity-40">(placeholder data — Phase 2 wires the real chart)</p>
     </main>
