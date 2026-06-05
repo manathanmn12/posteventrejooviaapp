@@ -213,3 +213,82 @@ as $$
 $$;
 revoke all on function public.mark_gift_opened(text) from public;
 grant execute on function public.mark_gift_opened(text) to anon, authenticated;
+
+-- ===== Share-first additions (2026-06-05, Atlas-approved redesign) =====
+-- Mutual-consent connections: type-level chart data only; journals/check-ins/mood NEVER cross this boundary.
+
+create table public.connections (
+  id uuid primary key default gen_random_uuid(),
+  requester_user_id uuid not null references public.users(id) on delete cascade,
+  recipient_user_id uuid not null references public.users(id) on delete cascade,
+  relationship text not null default 'teammate'
+    check (relationship in ('teammate','coworker','family','friend','other')),
+  status text not null default 'pending'
+    check (status in ('pending','accepted','revoked')),
+  accepted_at timestamptz,
+  revoked_at timestamptz,
+  created_at timestamptz not null default now(),
+  unique (requester_user_id, recipient_user_id),
+  check (requester_user_id <> recipient_user_id)
+);
+create index on public.connections (recipient_user_id, status);
+
+create table public.invites (
+  id uuid primary key default gen_random_uuid(),
+  slug text unique not null,
+  inviter_user_id uuid not null references public.users(id) on delete cascade,
+  relationship text not null default 'teammate'
+    check (relationship in ('teammate','coworker','family','friend','other')),
+  recipient_email text,
+  opened_at timestamptz,
+  accepted_connection_id uuid references public.connections(id) on delete set null,
+  expires_at timestamptz,
+  created_at timestamptz not null default now()
+);
+create index on public.invites (slug);
+
+alter table public.connections enable row level security;
+alter table public.invites enable row level security;
+
+-- Either party can see the connection row; only the requester creates; either party can revoke.
+create policy "own connections" on public.connections for select to authenticated
+  using (requester_user_id = auth.uid() or recipient_user_id = auth.uid());
+create policy "request connection" on public.connections for insert to authenticated
+  with check (requester_user_id = auth.uid());
+create policy "respond or revoke" on public.connections for update to authenticated
+  using (requester_user_id = auth.uid() or recipient_user_id = auth.uid())
+  with check (requester_user_id = auth.uid() or recipient_user_id = auth.uid());
+
+-- Inviter manages own invites; recipients accept via RPC, never direct table access.
+create policy "own invites" on public.invites for select to authenticated
+  using (inviter_user_id = auth.uid());
+create policy "create invite" on public.invites for insert to authenticated
+  with check (inviter_user_id = auth.uid());
+
+-- Comparison data access: an accepted connection exposes the OTHER person's
+-- type-level chart fields ONLY through this function (never the raw table).
+create or replace function public.get_connection_chart(p_connection_id uuid)
+returns jsonb
+language sql
+security definer
+set search_path = public
+as $$
+  select jsonb_build_object(
+    'display_name', u.display_name,
+    'hd_type', h.hd_type,
+    'strategy', h.strategy,
+    'authority', h.authority,
+    'profile', h.profile,
+    'relationship', c.relationship
+  )
+  from connections c
+  join users u on u.id = case
+    when c.requester_user_id = auth.uid() then c.recipient_user_id
+    else c.requester_user_id end
+  join human_design_profiles h on h.user_id = u.id
+  where c.id = p_connection_id
+    and c.status = 'accepted'
+    and (c.requester_user_id = auth.uid() or c.recipient_user_id = auth.uid());
+$$;
+revoke all on function public.get_connection_chart(uuid) from public;
+grant execute on function public.get_connection_chart(uuid) to authenticated;

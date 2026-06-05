@@ -1,6 +1,7 @@
 const nav = [
   ["Today", "/today"],
   ["Design", "/design"],
+  ["Circle", "/organizer"],
   ["Journal", "/journal"],
   ["Coach", "/coach"],
   ["Reports", "/reports"],
