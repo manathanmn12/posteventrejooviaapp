@@ -1,0 +1,8 @@
+-- APPLIED 2026-06-05 to Supabase project "Instant quote to ROI/KPI dashboard" (aliilrbktjhsppmfhija)
+-- as migration `rejoovia_alignment_core` — the FREE-TIER path (Atlas's call: no Pro upgrade for testing).
+-- 14 tables in dedicated `rejoovia` schema. anon: ZERO table grants (verified by role probes);
+-- authenticated: own rows via auth.uid(); admin tables service-role only; 3 security-definer RPC doors.
+-- The version in supabase/migrations/0001_core.sql (public schema) is RETAINED for the future
+-- dedicated-project migration when the app outgrows free tier.
+-- NOTE for Phase 2 wiring: add `rejoovia` to Exposed Schemas (Supabase dashboard -> Settings -> API)
+-- and use supabase-js with { db: { schema: 'rejoovia' } }.
