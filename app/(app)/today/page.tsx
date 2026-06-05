@@ -13,7 +13,7 @@ export default function Today() {
           did it feel borrowed?
         </p>
       </Card>
-      <a href="/today/checkin" className="mt-6 block text-center rounded-full bg-mist py-3 font-medium text-ink">
+      <a href="/today/checkin" className="mt-6 block text-center cta rounded-full py-3">
         60-second check-in
       </a>
       <Card className="mt-6">

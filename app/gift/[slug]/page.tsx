@@ -19,7 +19,7 @@ export default async function GiftPortal({ params }: { params: Promise<{ slug: s
         <Orb size={56} />
         <a
           href="/welcome"
-          className="mt-6 inline-block rounded-full bg-mist px-8 py-3 font-medium text-ink"
+          className="mt-6 inline-block cta rounded-full px-8 py-3"
         >
           Discover your design
         </a>

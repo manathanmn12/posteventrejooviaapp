@@ -13,7 +13,7 @@ export default function Landing() {
       </p>
       <a
         href="/gift/demo"
-        className="mt-10 inline-block rounded-full bg-mist px-8 py-3 font-medium text-ink"
+        className="mt-10 inline-block cta rounded-full px-8 py-3"
       >
         I have a gift link
       </a>

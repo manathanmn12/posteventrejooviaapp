@@ -1,9 +1,10 @@
 import type { Metadata, Viewport } from "next";
-import { Fraunces, Outfit } from "next/font/google";
+import { Space_Grotesk, DM_Sans, Bebas_Neue } from "next/font/google";
 import "./globals.css";
 
-const fraunces = Fraunces({ subsets: ["latin"], variable: "--font-fraunces" });
-const outfit = Outfit({ subsets: ["latin"], variable: "--font-outfit" });
+const grotesk = Space_Grotesk({ subsets: ["latin"], variable: "--font-grotesk" });
+const dmsans = DM_Sans({ subsets: ["latin"], variable: "--font-dmsans" });
+const bebas = Bebas_Neue({ weight: "400", subsets: ["latin"], variable: "--font-bebas" });
 
 export const metadata: Metadata = {
   title: "ReJoovia Alignment — your energy has a design",
@@ -13,11 +14,11 @@ export const metadata: Metadata = {
   appleWebApp: { capable: true, statusBarStyle: "black-translucent", title: "ReJoovia" },
 };
 
-export const viewport: Viewport = { themeColor: "#0A1220" };
+export const viewport: Viewport = { themeColor: "#0A1628" };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${fraunces.variable} ${outfit.variable}`}>
+    <html lang="en" className={`${grotesk.variable} ${dmsans.variable} ${bebas.variable}`}>
       <body className="font-sans antialiased min-h-screen">
         {children}
         <footer className="px-6 py-8 text-center text-xs opacity-50">

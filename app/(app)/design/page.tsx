@@ -15,9 +15,14 @@ export default function Design() {
       <h1 className="font-display text-2xl">Your design</h1>
       <p className="mt-2 text-sm opacity-70">Revealed gradually — depth you can actually use beats a data dump.</p>
       {cards.map(([title, status]) => (
-        <Card key={title} className="mt-4 flex items-center justify-between">
+        <Card
+          key={title}
+          className={`mt-4 flex items-center justify-between ${status === "unlocked" ? "unlock" : ""}`}
+        >
           <span>{title}</span>
-          <span className="text-xs opacity-50">{status}</span>
+          <span className={`text-xs ${status === "unlocked" ? "text-gold" : "opacity-50"}`}>
+            {status}
+          </span>
         </Card>
       ))}
     </main>
