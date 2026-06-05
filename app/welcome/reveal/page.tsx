@@ -1,19 +1,31 @@
-import Orb from "@/components/Orb";
+"use client";
+import { useEffect, useState } from "react";
+import { createClient } from "@/lib/supabase/client";
+import { TYPE_META, type HD } from "@/lib/hd";
 
 export default function Reveal() {
+  const [hd, setHd] = useState<HD | null>(null);
+  useEffect(() => {
+    createClient().rpc("rj_get_state").then(({ data }) => setHd(data?.hd ?? null));
+  }, []);
+  const meta = hd?.hd_type ? TYPE_META[hd.hd_type] : null;
   return (
-    <main className="mx-auto max-w-md px-6 pt-20 text-center">
-      <Orb />
-      <p className="mt-8 text-xs uppercase tracking-[0.25em] text-mist">Your design</p>
-      <h1 className="font-display text-5xl mt-3">Projector</h1>
-      <p className="mt-4 opacity-80 leading-relaxed">
-        ≈20% of people. Your aura is focused and penetrating — you see systems and people clearly.
-        Your strategy: wait to be recognized and invited.
-      </p>
-      <a href="/report" className="mt-10 inline-block cta rounded-full px-8 py-3">
-        Open your report
-      </a>
-      <p className="mt-3 text-xs opacity-40">(placeholder data — Phase 2 wires the real chart)</p>
+    <main className="mx-auto max-w-md px-6 pt-20 pb-16 text-center">
+      <div className="aurora"><div className="blob b1" /><div className="blob b2" /><div className="blob b3" /></div>
+      <div className="orb-wrap"><div className="orb" /><div className="orb-ring" /></div>
+      <p className="text-[10px] uppercase tracking-[0.34em] text-[--cyan] font-semibold mt-4">Your design</p>
+      <h1 className="font-display text-5xl mt-3">{hd?.hd_type ?? "…"}</h1>
+      {meta && (
+        <p className="mt-4 insight mx-auto" style={{ maxWidth: "32ch" }}>
+          {meta.pct} of people. Your aura is {meta.aura.toLowerCase()}. Strategy: {hd?.strategy}.
+        </p>
+      )}
+      {hd?.time_estimated && (
+        <p className="mt-3 text-xs" style={{ color: "var(--gold)" }}>
+          Built with an estimated birth time — refine it in Settings to sharpen your decision profile.
+        </p>
+      )}
+      <a href="/report" className="cta inline-block mt-9">Open your report</a>
     </main>
   );
 }

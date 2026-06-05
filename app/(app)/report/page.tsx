@@ -1,52 +1,72 @@
-import Card from "@/components/Card";
+"use client";
+import { useEffect, useState } from "react";
+import { createClient } from "@/lib/supabase/client";
+import { CHAPTERS, type HD } from "@/lib/hd";
 
-// THE centerpiece (pivot 6/05): the organizer's custom Human Design report.
-// Core chapters ready day one; deeper chapters unlock through play (check-ins + quests).
-// PDF download arrives Phase 6. Placeholder data until Phase 2 wires the real chart.
-
-const ready = [
-  ["1 · Your Type & Strategy", "Projector — wait for the invitation"],
-  ["2 · How You Decide", "Emotional Authority — clarity comes in waves"],
-  ["3 · Your Profile", "1/4 — Investigator / Opportunist"],
-];
-
-const locked = [
-  ["4 · Your Leadership Style", "unlocks at 3 check-ins"],
-  ["5 · Stress & Burnout Map", "unlocks at 7"],
-  ["6 · Your Talents", "unlocks at 14"],
-  ["7 · Your Work Rhythm", "unlocks at 21"],
-  ["8 · Your Throughline", "unlocks at 30"],
-];
+type State = { user?: { display_name?: string }; hd?: HD; checkin_count?: number };
 
 export default function Report() {
+  const [s, setS] = useState<State | null>(null);
+  const [open, setOpen] = useState<number | null>(null);
+  useEffect(() => {
+    createClient().rpc("rj_get_state").then(({ data }) => setS(data ?? {}));
+  }, []);
+  const checkins = s?.checkin_count ?? 0;
+  const unlocked = CHAPTERS.filter((c) => checkins >= c.gate).length;
+  const newest = CHAPTERS.filter((c) => checkins >= c.gate).slice(-1)[0]?.n;
+  const chap = open != null ? CHAPTERS.find((c) => c.n === open) : null;
   return (
     <main>
-      <p className="text-xs uppercase tracking-[0.25em] text-teal">Your design report</p>
-      <h1 className="font-display text-3xl mt-2">Written about you. Earned by you.</h1>
-      <p className="mt-2 text-sm opacity-70">
-        Three chapters are yours from day one. Five more unlock as you play — every check-in and
-        quest deepens the report.
+      <p className="text-[10px] uppercase tracking-[0.34em] font-semibold" style={{ color: "var(--cyan)" }}>Your design report</p>
+      <h1 className="cover-title mt-3">Written about <em>you</em>.<br/>Earned by you.</h1>
+      <p className="text-[12.5px] mt-2" style={{ color: "var(--dim)" }}>
+        {unlocked} of {CHAPTERS.length} chapters open · every check-in moves the trail
+      </p>
+      <div className="prog-line"><div className="prog-fill" style={{ width: `${(unlocked / CHAPTERS.length) * 100}%` }} /></div>
+      <p className="prog-meta">{checkins} CHECK-INS BANKED</p>
+
+      <div className="trail mt-2">
+        {CHAPTERS.map((c) => {
+          const isOpen = checkins >= c.gate;
+          const status = isOpen ? (c.n === newest && c.gate > 0 ? "new" : "done")
+            : c.gate === [3,7,14,21,30].find((g) => checkins < g) ? "next" : "far";
+          return (
+            <div key={c.n} className={`node ${isOpen ? "tap" : ""}`} onClick={() => isOpen && setOpen(c.n)}>
+              <span className={`n-dot ${status}`}>{status === "done" ? "✓" : String(c.n).padStart(2, "0")}</span>
+              <div className="n-card">
+                <div className="flex justify-between items-baseline gap-2">
+                  <b className="font-display text-[14.5px]">{c.title}</b>
+                  <span className="text-[10px] whitespace-nowrap" style={{ color: status === "new" ? "var(--gold)" : "var(--faint)" }}>
+                    {isOpen ? (status === "new" ? "NEW" : "OPEN") : `at ${c.gate} check-ins`}
+                  </span>
+                </div>
+                <p className="text-[11.5px] mt-1" style={{ color: "var(--faint)" }}>{c.sub}</p>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      <button className="cta w-full mt-6" disabled={unlocked < CHAPTERS.length}>
+        {unlocked < CHAPTERS.length ? `PDF unlocks with chapter ${CHAPTERS.length}` : "Download your report (PDF)"}
+      </button>
+      <p className="mt-4 text-[11px]" style={{ color: "var(--faint)" }}>
+        Your design is a reflection tool, not a prescription — and never a measure of ability.
       </p>
 
-      {ready.map(([title, sub]) => (
-        <Card key={title} className="mt-4">
-          <p className="text-sm">{title}</p>
-          <p className="mt-1 text-xs text-teal">{sub}</p>
-        </Card>
-      ))}
-
-      <p className="mt-8 text-xs uppercase tracking-widest text-gold">Unlocks through play</p>
-      {locked.map(([title, status]) => (
-        <Card key={title} className="mt-3 flex items-center justify-between opacity-80">
-          <span className="text-sm">{title}</span>
-          <span className="text-xs text-gold">{status}</span>
-        </Card>
-      ))}
-
-      <button className="cta mt-8 block w-full rounded-full py-3 text-center opacity-60" disabled>
-        Download your report (PDF) — unlocks with chapter 8
-      </button>
-      <p className="mt-3 text-xs opacity-40">(placeholder report — Phase 2 writes yours from your real chart)</p>
+      {chap && s?.hd && (
+        <div className="scene">
+          <button className="scene-close" onClick={() => setOpen(null)}>✕</button>
+          <div className="aurora"><div className="blob b1" /><div className="blob b2" /></div>
+          <p className="kicker">Chapter {String(chap.n).padStart(2, "0")}</p>
+          <h2>{chap.title}</h2>
+          <p className="text-[11px] uppercase tracking-widest" style={{ color: "var(--faint)" }}>{chap.sub}</p>
+          {chap.body(s.hd).map((para, i) => (i === 0
+            ? <p key={i} className="pull">{para}</p>
+            : <p key={i}>{para}</p>
+          ))}
+        </div>
+      )}
     </main>
   );
 }
