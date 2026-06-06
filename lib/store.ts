@@ -122,9 +122,33 @@ export function xpTotal(checkins: number, a: Activity) {
   return checkins * 10 + a.resets * 5 + a.decisions * 5 + a.events * 15;
 }
 
+// ---- Check-in history (for the Mirror) — localStorage in both modes ----
+const HIST = "rj_history_v1";
+export type Day = { date: string; energy: number; stress: number; clarity: number; decision: number };
+export function getHistory(): Day[] {
+  try { return JSON.parse(localStorage.getItem(HIST) || "[]") as Day[]; } catch { return []; }
+}
+function recordHistory(d: Day) {
+  const h = getHistory().filter((x) => x.date !== d.date);
+  h.push(d);
+  localStorage.setItem(HIST, JSON.stringify(h.slice(-90)));
+}
+// trend over the last few days: returns the most pressing signal or null
+export type TrendSignal = "energy-dip" | "clarity-dip" | "stress-high" | null;
+export function detectTrend(): TrendSignal {
+  const h = getHistory().slice(-3);
+  if (h.length < 2) return null;
+  const last2 = h.slice(-2);
+  if (last2.every((d) => d.stress >= 7)) return "stress-high";
+  if (last2.every((d) => d.energy <= 4)) return "energy-dip";
+  if (last2.every((d) => d.clarity <= 4)) return "clarity-dip";
+  return null;
+}
+
 export async function submitCheckin(p: {
   p_energy: number; p_stress: number; p_clarity: number; p_decision: number; p_reflection: string;
 }) {
+  recordHistory({ date: todayISO(), energy: p.p_energy, stress: p.p_stress, clarity: p.p_clarity, decision: p.p_decision });
   if (mode() === "local") {
     const l = readLocal();
     const t = todayISO();

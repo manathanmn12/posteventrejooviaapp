@@ -98,3 +98,20 @@ input[type=range]{accent-color:#22E5FF}
 .tile span{font-size:10px;color:var(--faint)}
 .tile-ic{width:34px;height:34px;border-radius:11px;border:1.5px solid;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700}
 .tile-orb{width:34px;height:34px;border-radius:50%;background:radial-gradient(circle at 38% 32%,rgba(140,255,240,.95),var(--teal) 45%,rgba(34,229,255,.85) 75%);box-shadow:0 0 18px rgba(34,229,255,.4)}
+
+/* mirror — shimmer field */
+.mirror-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:14px 8px;padding:22px 16px;
+  background:rgba(34,229,255,.04);border:1px solid var(--stroke);border-radius:20px}
+.mirror-cell{display:flex;flex-direction:column;align-items:center;gap:6px;min-height:52px;justify-content:flex-end}
+.mirror-orb{border-radius:50%;transition:all .3s ease-out}
+.mirror-cell:hover .mirror-orb{transform:scale(1.25);filter:brightness(1.3)}
+.mirror-dow{font-size:8px;letter-spacing:.06em;color:var(--faint)}
+
+/* reset bloom on completion */
+.orb.bloom{animation:bloom .9s cubic-bezier(.25,.46,.45,.94) forwards}
+@keyframes bloom{0%{transform:scale(1);opacity:1}55%{transform:scale(1.7);opacity:.7}100%{transform:scale(1.06);opacity:1}}
+
+/* premium polish — title entrance + tabular stat nums */
+h1,h2{animation:fade-slide-up .55s ease-out}
+@keyframes fade-slide-up{0%{opacity:0;transform:translateY(10px)}100%{opacity:1;transform:translateY(0)}}
+.streak-chip b,.font-stat{font-variant-numeric:tabular-nums}

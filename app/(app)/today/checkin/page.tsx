@@ -25,9 +25,22 @@ export default function Checkin() {
       r.push("/today");
     } catch (e) { setErr(String(e)); setBusy(false); }
   }
+  // orb listens to the sliders: brighter/teal when energy beats stress, coral when stress wins
+  const bal = v.energy - v.stress;
+  const orbBg = bal > 1
+    ? "radial-gradient(circle at 38% 32%,rgba(140,255,240,.95),var(--teal) 44%,rgba(34,229,255,.8) 75%)"
+    : bal < -1
+    ? "radial-gradient(circle at 38% 32%,rgba(255,210,200,.9),var(--coral) 46%,rgba(224,137,125,.4) 78%)"
+    : "radial-gradient(circle at 38% 32%,rgba(140,255,240,.85),var(--cyan) 45%,rgba(34,229,255,.35) 78%)";
+  const orbGlow = `0 0 ${44 + v.clarity * 5}px ${bal < -1 ? "rgba(224,137,125,.4)" : "rgba(34,229,255,.4)"}`;
+
   return (
     <main>
-      <h1 className="font-display text-2xl">Check-in</h1>
+      <div className="orb-wrap" style={{ width: 120, height: 120, margin: "0 auto 4px" }}>
+        <div className="orb" style={{ width: 84, height: 84, background: orbBg, boxShadow: orbGlow,
+          transition: "background .4s ease, box-shadow .4s ease" }} />
+      </div>
+      <h1 className="font-display text-2xl text-center">How are you, really?</h1>
       {SLIDERS.map(([key, label, q]) => (
         <div key={key} className="gcard mt-4">
           <div className="gcard-label"><span>{label}</span><span style={{ color: "var(--cyan)" }}>{v[key]}</span></div>
