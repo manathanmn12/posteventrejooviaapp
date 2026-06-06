@@ -5,10 +5,10 @@ import { ensureSession } from "@/lib/store";
 
 const nav = [
   ["Today", "/today"],
-  ["Practices", "/practices"],
+  ["Path", "/path"],
+  ["Coach", "/coach"],
   ["Mirror", "/mirror"],
   ["Report", "/report"],
-  ["Wins", "/wins"],
 ] as const;
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {

@@ -38,9 +38,21 @@ export default function Decide() {
               </li>
             ))}
           </ol>
-          {q.trim() && <p className="mt-4 text-xs" style={{ color: "var(--faint)" }}>Logged · +5 XP · come back when clarity lands.</p>}
+          {q.trim() && <p className="mt-4 text-xs" style={{ color: "var(--faint)" }}>Logged · +5 XP</p>}
         </div>
       )}
+
+      {shown && (
+        <a href={`/coach?q=${encodeURIComponent(q.trim() ? `Help me decide: ${q.trim()}` : "Help me think through a decision using my authority")}`}
+          className="gcard mt-4 flex items-center justify-between" style={{ textDecoration: "none", borderColor: "rgba(168,85,247,.3)" }}>
+          <div>
+            <p className="text-[10px] uppercase tracking-widest" style={{ color: "var(--violet)" }}>Talk it through</p>
+            <p className="text-sm mt-1" style={{ color: "var(--dim)" }}>Take this to your coach for a real conversation →</p>
+          </div>
+          <span style={{ color: "var(--violet)" }}>●</span>
+        </a>
+      )}
+
       <p className="mt-6 text-[11px]" style={{ color: "var(--faint)" }}>
         A reflection tool, not a prescription. The call is always yours.
       </p>

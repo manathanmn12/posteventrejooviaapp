@@ -118,6 +118,17 @@ export function xpTotal(checkins: number, a: Activity) {
   return checkins * 10 + a.resets * 5 + a.decisions * 5 + a.events * 15;
 }
 
+// ---- Path progress (which lessons completed) ----
+const LESSON = "rj_lessons_v1";
+export function getLessonsDone(): string[] {
+  try { return JSON.parse(localStorage.getItem(LESSON) || "[]") as string[]; } catch { return []; }
+}
+export function markLessonDone(key: string) {
+  const d = getLessonsDone();
+  if (!d.includes(key)) { d.push(key); localStorage.setItem(LESSON, JSON.stringify(d)); }
+  return d;
+}
+
 // ---- Check-in history (for the Mirror) — localStorage in both modes ----
 const HIST = "rj_history_v1";
 export type Day = { date: string; energy: number; stress: number; clarity: number; decision: number };

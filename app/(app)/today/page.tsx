@@ -68,21 +68,35 @@ export default function Today() {
         </div>
       </div>
 
-      {/* Launchpad */}
-      <p className="text-[10px] uppercase tracking-[0.26em] mt-9 mb-3" style={{ color: "var(--faint)" }}>Practices</p>
+      {/* Learn — the Path */}
+      <a href="/path" className="gcard mt-9 flex items-center justify-between" style={{ textDecoration: "none", borderColor: "rgba(34,229,255,.32)" }}>
+        <div>
+          <p className="text-[10px] uppercase tracking-widest" style={{ color: "var(--cyan)" }}>The path · learn your design</p>
+          <p className="text-sm mt-1" style={{ color: "var(--dim)" }}>Lessons that teach what every part of your chart means →</p>
+        </div>
+        <span style={{ color: "var(--cyan)" }}>➜</span>
+      </a>
+
+      {/* Practices */}
+      <p className="text-[10px] uppercase tracking-[0.26em] mt-7 mb-3" style={{ color: "var(--faint)" }}>Practices</p>
       <div className="grid grid-cols-3 gap-3">
         <a href="/practices" className="tile"><span className="tile-orb" /><b>Reset</b><span>breathe</span></a>
         <a href="/decide" className="tile"><span className="tile-ic" style={{ borderColor: "rgba(34,229,255,.4)", color: "var(--cyan)" }}>?</span><b>Decide</b><span>a choice</span></a>
         <a href="/event" className="tile"><span className="tile-ic" style={{ borderColor: "rgba(255,209,102,.4)", color: "var(--gold)" }}>◆</span><b>Event</b><span>prep/recover</span></a>
       </div>
 
-      <a href="/mirror" className="gcard mt-4 flex items-center justify-between" style={{ textDecoration: "none" }}>
-        <div>
-          <p className="text-[10px] uppercase tracking-widest" style={{ color: "var(--cyan)" }}>The mirror</p>
-          <p className="text-sm mt-1" style={{ color: "var(--dim)" }}>{checkins >= 3 ? "See your patterns →" : `${3 - checkins} check-ins until it opens`}</p>
-        </div>
-        <span style={{ color: "var(--cyan)" }}>◍</span>
-      </a>
+      <div className="grid grid-cols-2 gap-3 mt-4">
+        <a href="/mirror" className="gcard flex items-center justify-between" style={{ textDecoration: "none" }}>
+          <div><p className="text-[10px] uppercase tracking-widest" style={{ color: "var(--cyan)" }}>Mirror</p>
+            <p className="text-xs mt-1" style={{ color: "var(--faint)" }}>{checkins >= 3 ? "your patterns" : `in ${3 - checkins}`}</p></div>
+          <span style={{ color: "var(--cyan)" }}>◍</span>
+        </a>
+        <a href="/wins" className="gcard flex items-center justify-between" style={{ textDecoration: "none" }}>
+          <div><p className="text-[10px] uppercase tracking-widest" style={{ color: "var(--gold)" }}>Wins</p>
+            <p className="text-xs mt-1" style={{ color: "var(--faint)" }}>streak & badges</p></div>
+          <span className="streak-chip"><b style={{ fontSize: 20 }}>{s?.streak?.current ?? 0}</b></span>
+        </a>
+      </div>
 
       {nextGate && (
         <div className="gcard mt-4">
