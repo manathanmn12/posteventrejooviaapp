@@ -1,47 +1,30 @@
 "use client";
 import { useState } from "react";
-import { createClient } from "@/lib/supabase/client";
+import { useRouter } from "next/navigation";
+import { ensureSession } from "@/lib/store";
 
 export default function Welcome() {
-  const [email, setEmail] = useState("");
-  const [sent, setSent] = useState(false);
-  const [err, setErr] = useState("");
-  async function send() {
-    setErr("");
-    const supabase = createClient();
-    const { error } = await supabase.auth.signInWithOtp({
-      email,
-      options: { emailRedirectTo: `${window.location.origin}/auth/confirm?next=/welcome/birth` },
-    });
-    if (error) setErr(error.message); else setSent(true);
+  const r = useRouter();
+  const [busy, setBusy] = useState(false);
+  async function begin() {
+    setBusy(true);
+    await ensureSession();
+    r.push("/welcome/birth");
   }
   return (
-    <main className="mx-auto max-w-md px-6 pt-20 pb-16">
+    <main className="mx-auto max-w-md px-6 pt-24 pb-16 text-center">
       <div className="aurora"><div className="blob b1" /><div className="blob b2" /><div className="blob b3" /></div>
-      <p className="text-[10px] uppercase tracking-[0.34em] text-[--cyan] font-semibold">Your gift begins</p>
-      <h1 className="font-display text-3xl mt-3">First, a way to reach you.</h1>
+      <div className="orb-wrap"><div className="orb" /><div className="orb-ring" /></div>
+      <p className="text-[10px] uppercase tracking-[0.34em] font-semibold mt-6" style={{ color: "var(--cyan)" }}>Your gift begins</p>
+      <h1 className="font-display text-3xl mt-3">No sign-up. Just your design.</h1>
       <p className="mt-3 text-sm" style={{ color: "var(--dim)" }}>
-        No password — we email you a magic link. Your report stays yours, on every device.
+        Two minutes, one question about your birth, and your report opens. Nothing to remember, no password.
       </p>
-      {sent ? (
-        <div className="gcard mt-8">
-          <p className="text-sm">Check your inbox — your link is on its way. Open it on this device.</p>
-        </div>
-      ) : (
-        <div className="gcard mt-8">
-          <input
-            type="email" value={email} onChange={(e) => setEmail(e.target.value)}
-            placeholder="you@company.com"
-            className="w-full rounded-xl bg-black/30 border border-white/10 p-4 text-sm outline-none focus:border-[--cyan]"
-          />
-          <button onClick={send} disabled={!email.includes("@")} className="cta w-full mt-4">
-            Email me my link
-          </button>
-          {err && <p className="mt-3 text-xs" style={{ color: "var(--coral)" }}>{err}</p>}
-        </div>
-      )}
-      <p className="mt-6 text-xs" style={{ color: "var(--faint)" }}>
-        One email, one link. No spam — this is a gift, not a funnel.
+      <button onClick={begin} disabled={busy} className="cta inline-block mt-9">
+        {busy ? "Opening…" : "Begin"}
+      </button>
+      <p className="mt-4 text-xs" style={{ color: "var(--faint)" }}>
+        Your data stays private to you. Add an email later only if you want it on another device.
       </p>
     </main>
   );

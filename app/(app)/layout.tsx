@@ -1,7 +1,7 @@
 "use client";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { useEffect } from "react";
-import { createClient } from "@/lib/supabase/client";
+import { ensureSession } from "@/lib/store";
 
 const nav = [
   ["Today", "/today"],
@@ -13,12 +13,7 @@ const nav = [
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   const path = usePathname();
-  const router = useRouter();
-  useEffect(() => {
-    createClient().auth.getSession().then(({ data }) => {
-      if (!data.session) router.replace("/welcome");
-    });
-  }, [router]);
+  useEffect(() => { ensureSession(); }, []); // anon-or-local session; never bounces
   return (
     <div className="mx-auto max-w-md min-h-screen flex flex-col">
       <div className="aurora"><div className="blob b1" /><div className="blob b2" /><div className="blob b3" /></div>

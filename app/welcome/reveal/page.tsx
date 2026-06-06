@@ -1,12 +1,12 @@
 "use client";
 import { useEffect, useState } from "react";
-import { createClient } from "@/lib/supabase/client";
+import { getState } from "@/lib/store";
 import { TYPE_META, type HD } from "@/lib/hd";
 
 export default function Reveal() {
   const [hd, setHd] = useState<HD | null>(null);
   useEffect(() => {
-    createClient().rpc("rj_get_state").then(({ data }) => setHd(data?.hd ?? null));
+    getState().then((s) => setHd(s.hd ?? null));
   }, []);
   const meta = hd?.hd_type ? TYPE_META[hd.hd_type] : null;
   return (

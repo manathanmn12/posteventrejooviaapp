@@ -1,7 +1,7 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { createClient } from "@/lib/supabase/client";
+import { ensureSession, saveChart } from "@/lib/store";
 import { STRATEGY, TYPE_META } from "@/lib/hd";
 
 export default function Birth() {
@@ -14,15 +14,14 @@ export default function Birth() {
   const [fallback, setFallback] = useState(false);
   const [err, setErr] = useState("");
 
+  useEffect(() => { ensureSession(); }, []); // instant session, no email
+
   async function save(chart: Record<string, unknown>) {
-    const supabase = createClient();
-    await supabase.rpc("rj_ensure_user");
-    const { error } = await supabase.rpc("rj_save_chart", {
-      p: { birth_date: date, birth_time: unknown ? "12:00" : time, time_estimated: unknown,
-           birth_city: city, ...chart },
-    });
-    if (error) { setErr(error.message); setBusy(false); return; }
-    r.push("/welcome/reveal");
+    try {
+      await saveChart({ birth_date: date, birth_time: unknown ? "12:00" : time,
+        time_estimated: unknown, birth_city: city, ...chart });
+      r.push("/welcome/reveal");
+    } catch (e) { setErr(String(e)); setBusy(false); }
   }
 
   async function compute() {

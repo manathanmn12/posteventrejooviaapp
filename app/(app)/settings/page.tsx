@@ -1,5 +1,5 @@
 "use client";
-import { createClient } from "@/lib/supabase/client";
+import { signOut } from "@/lib/store";
 import { useRouter } from "next/navigation";
 
 export default function Settings() {
@@ -10,8 +10,8 @@ export default function Settings() {
       <div className="gcard mt-6 space-y-3 text-sm" style={{ color: "var(--dim)" }}>
         <p>Refine birth time · export my data · delete my data — Phase 4</p>
         <button className="text-left" style={{ color: "var(--coral)" }}
-          onClick={async () => { await createClient().auth.signOut(); r.push("/"); }}>
-          Sign out
+          onClick={async () => { await signOut(); r.push("/"); }}>
+          Sign out &amp; clear my data
         </button>
       </div>
       <p className="mt-6 text-xs" style={{ color: "var(--faint)" }}>

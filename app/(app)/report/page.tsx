@@ -1,15 +1,13 @@
 "use client";
 import { useEffect, useState } from "react";
-import { createClient } from "@/lib/supabase/client";
-import { CHAPTERS, type HD } from "@/lib/hd";
-
-type State = { user?: { display_name?: string }; hd?: HD; checkin_count?: number };
+import { getState, type AppState } from "@/lib/store";
+import { CHAPTERS } from "@/lib/hd";
 
 export default function Report() {
-  const [s, setS] = useState<State | null>(null);
+  const [s, setS] = useState<AppState | null>(null);
   const [open, setOpen] = useState<number | null>(null);
   useEffect(() => {
-    createClient().rpc("rj_get_state").then(({ data }) => setS(data ?? {}));
+    getState().then(setS);
   }, []);
   const checkins = s?.checkin_count ?? 0;
   const unlocked = CHAPTERS.filter((c) => checkins >= c.gate).length;

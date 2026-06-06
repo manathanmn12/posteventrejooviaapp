@@ -1,16 +1,12 @@
 "use client";
 import { useEffect, useState } from "react";
-import { createClient } from "@/lib/supabase/client";
-import { TYPE_META, levelFor, type HD } from "@/lib/hd";
-
-type State = { user?: { display_name?: string }; hd?: HD;
-  streak?: { current: number; longest: number }; checkin_count?: number; today_done?: boolean };
+import { ensureSession, getState, type AppState } from "@/lib/store";
+import { TYPE_META, levelFor } from "@/lib/hd";
 
 export default function Today() {
-  const [s, setS] = useState<State | null>(null);
+  const [s, setS] = useState<AppState | null>(null);
   useEffect(() => {
-    const c = createClient();
-    c.rpc("rj_ensure_user").then(() => c.rpc("rj_get_state").then(({ data }) => setS(data ?? {})));
+    ensureSession().then(() => getState().then(setS));
   }, []);
   const checkins = s?.checkin_count ?? 0;
   const { lvl, name } = levelFor(checkins);

@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { createClient } from "@/lib/supabase/client";
+import { submitCheckin } from "@/lib/store";
 
 const SLIDERS = [
   ["energy", "Energy", "How's your energy, honestly?"],
@@ -18,11 +18,12 @@ export default function Checkin() {
   const [err, setErr] = useState("");
   async function submit() {
     setBusy(true); setErr("");
-    const { error } = await createClient().rpc("rj_submit_checkin", {
-      p_energy: v.energy, p_stress: v.stress, p_clarity: v.clarity, p_decision: v.decision, p_reflection: note,
-    });
-    if (error) { setErr(error.message); setBusy(false); return; }
-    r.push("/today");
+    try {
+      await submitCheckin({
+        p_energy: v.energy, p_stress: v.stress, p_clarity: v.clarity, p_decision: v.decision, p_reflection: note,
+      });
+      r.push("/today");
+    } catch (e) { setErr(String(e)); setBusy(false); }
   }
   return (
     <main>
