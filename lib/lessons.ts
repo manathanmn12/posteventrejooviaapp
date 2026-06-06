@@ -100,3 +100,17 @@ export const LESSONS: Lesson[] = [
     coachSeed: "Now that I understand my whole chart, what should I focus on first?",
   },
 ];
+
+// Integration exercises — the real-life challenge that turns each lesson into a habit (Mindvalley move).
+export const INTEGRATIONS: Record<string, string> = {
+  intro: "Today, just observe yourself once — catch a single moment your energy felt right, and one it felt off.",
+  type: "Notice one time today you fought your natural rhythm. No judgment — just catch it happening.",
+  strategy: "Use your strategy once today, on purpose, and watch what changes.",
+  authority: "Run one small decision through your authority before you act — don't let the head jump first.",
+  profile: "Notice which of your two profile lines showed up more today, and where.",
+  centers: "Catch yourself absorbing someone else's stress today — and name it as theirs, not yours.",
+  gates: "Pick one of your gates and lean into it deliberately once today.",
+  channels: "Notice one trait people consistently rely on you for. That's a channel — that's fixed YOU.",
+  cross: "Ask once today: does what I'm doing point toward my throughline, or away from it?",
+  integrate: "Make one real decision today fully as your design — strategy, authority, all of it — and notice the difference.",
+};

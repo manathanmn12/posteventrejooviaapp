@@ -164,3 +164,31 @@ export function identityLine(checkins: number, resets: number, decisions: number
   const i = (checkins + resets * 2 + decisions) % IDENTITY.length;
   return IDENTITY[i];
 }
+
+// ---------- Growth Goals (Mindvalley-style onboarding personalization) ----------
+export type Goal = { key: string; label: string; sub: string; focus: string };
+export const GOALS: Goal[] = [
+  { key: "decisions", label: "Make clearer decisions", sub: "trust myself under pressure", focus: "You're here to decide with less second-guessing." },
+  { key: "energy", label: "Protect my energy", sub: "stop running on empty", focus: "You're here to spend energy where it actually counts." },
+  { key: "leadership", label: "Lead more like myself", sub: "influence without forcing", focus: "You're here to lead from your real strengths." },
+  { key: "communication", label: "Communicate better", sub: "be understood, less friction", focus: "You're here to be heard without the clash." },
+  { key: "clarity", label: "Find more clarity", sub: "quiet the noise", focus: "You're here to hear yourself think again." },
+];
+export function goalByKey(k: string) { return GOALS.find((g) => g.key === k); }
+
+// ---------- Signature guided ritual (the ReJoovia Reset — a 6-phase daily practice) ----------
+export type Phase = { key: string; title: string; guide: string; secs: number; orb?: boolean; typed?: "intention" | "close" };
+export const RITUAL_PHASES: Phase[] = [
+  { key: "arrive", title: "Arrive", secs: 25,
+    guide: "Put everything down for a few minutes. Feel your feet, your seat, the weight of your body. You have nowhere else to be right now." },
+  { key: "breathe", title: "Breathe", secs: 40, orb: true,
+    guide: "Let the orb set your pace — in as it grows, out as it settles. Three slow rounds. Nothing to do but follow it." },
+  { key: "gratitude", title: "Gratitude", secs: 30,
+    guide: "Bring to mind one thing you're genuinely grateful for today. See it clearly. Let yourself actually feel what it gives you." },
+  { key: "scan", title: "Energy scan", secs: 30,
+    guide: "Where is your energy right now — humming, heavy, scattered, calm? Don't fix it. Just notice it honestly. This is the self-awareness your design runs on." },
+  { key: "intention", title: "Intention", secs: 30, typed: "intention",
+    guide: "Set one intention for how you want to move through today — in a way that honors how you're wired." },
+  { key: "close", title: "Close", secs: 25, typed: "close",
+    guide: "Take this calm with you." },
+];

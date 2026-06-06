@@ -25,7 +25,7 @@ export default function Reveal() {
           Built with an estimated birth time — refine it in Settings to sharpen your decision profile.
         </p>
       )}
-      <a href="/report" className="cta inline-block mt-9">Open your report</a>
+      <a href="/welcome/goal" className="cta inline-block mt-9">Continue</a>
     </main>
   );
 }

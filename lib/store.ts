@@ -175,3 +175,8 @@ export async function submitCheckin(p: {
     if (error) writeLocalCheckin();
   } catch { writeLocalCheckin(); }
 }
+
+// ---- Growth goal (onboarding personalization) ----
+const GOAL = "rj_goal_v1";
+export function getGoal(): string { try { return localStorage.getItem(GOAL) || ""; } catch { return ""; } }
+export function setGoal(k: string) { try { localStorage.setItem(GOAL, k); } catch {} }

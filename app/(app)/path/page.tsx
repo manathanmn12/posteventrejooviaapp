@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { getState, getLessonsDone, markLessonDone, type AppState } from "@/lib/store";
-import { LESSONS } from "@/lib/lessons";
+import { LESSONS, INTEGRATIONS } from "@/lib/lessons";
 
 export default function Path() {
   const r = useRouter();
@@ -26,12 +26,16 @@ export default function Path() {
 
   return (
     <main>
-      <p className="text-[10px] uppercase tracking-[0.34em] font-semibold" style={{ color: "var(--cyan)" }}>The path</p>
-      <h1 className="font-display text-2xl mt-2">Understand your design, step by step.</h1>
-      <p className="mt-2 text-sm" style={{ color: "var(--dim)" }}>Ten short lessons, each building on the last. By the end, every number in your chart means something.</p>
+      <p className="text-[10px] uppercase tracking-[0.34em] font-semibold" style={{ color: "var(--cyan)" }}>The Alignment Quest</p>
+      <h1 className="font-display text-2xl mt-2">{doneCount >= LESSONS.length ? "You completed the Quest." : "Understand your design, one day at a time."}</h1>
+      <p className="mt-2 text-sm" style={{ color: "var(--dim)" }}>
+        {doneCount >= LESSONS.length
+          ? "Every number in your chart now means something. Keep living it — your coach and your daily practice take it from here."
+          : "A 10-day journey. Each day: one short lesson on your design, then a small real-life challenge to live it. Outcome — you'll actually understand how you're wired."}
+      </p>
 
       <div className="prog-line mt-5"><div className="prog-fill" style={{ width: `${(doneCount / LESSONS.length) * 100}%` }} /></div>
-      <p className="prog-meta">{doneCount} OF {LESSONS.length} LESSONS</p>
+      <p className="prog-meta">DAY {Math.min(doneCount + 1, LESSONS.length)} OF {LESSONS.length} · {doneCount} COMPLETE</p>
 
       <div className="mt-2 space-y-3">
         {LESSONS.map((l, i) => {
@@ -61,18 +65,25 @@ export default function Path() {
         <div className="scene">
           <button className="scene-close" onClick={() => setOpen(null)}>✕</button>
           <div className="aurora"><div className="blob b1" /><div className="blob b2" /></div>
-          <p className="kicker">Lesson {String((open ?? 0) + 1).padStart(2, "0")} · {lesson.kicker}</p>
+          <p className="kicker">Day {String((open ?? 0) + 1).padStart(2, "0")} · {lesson.kicker}</p>
           <h2>{lesson.title}</h2>
           <p>{lesson.teach}</p>
           <div className="pull">{lesson.forYou(hd)}</div>
           <p style={{ color: "var(--gold)", marginTop: 20 }}>{lesson.takeaway}</p>
+
+          <div className="gcard mt-6" style={{ borderColor: "rgba(0,201,177,.32)" }}>
+            <p className="text-[10px] uppercase tracking-widest" style={{ color: "var(--teal)" }}>Today&apos;s integration</p>
+            <p className="text-sm mt-2" style={{ color: "var(--ice)" }}>{INTEGRATIONS[lesson.key] ?? "Carry one idea from this lesson into your day."}</p>
+            <p className="text-[11px] mt-2" style={{ color: "var(--faint)" }}>The lesson is the idea. This is how it becomes yours.</p>
+          </div>
+
           {lesson.coachSeed && (
             <a href={`/coach?q=${encodeURIComponent(lesson.coachSeed)}`} className="block mt-6 text-sm" style={{ color: "var(--violet)" }}>
               Talk this through with your coach →
             </a>
           )}
           <button onClick={() => complete(open!)} className="cta w-full mt-6">
-            {done.includes(lesson.key) ? "Next lesson" : "Got it — next lesson"}
+            {open! + 1 >= LESSONS.length ? "Complete the Quest ✦" : done.includes(lesson.key) ? "Next day" : "Done — next day"}
           </button>
         </div>
       )}

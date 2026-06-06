@@ -8,9 +8,20 @@ export default function Practices() {
     <main>
       <p className="text-[10px] uppercase tracking-[0.34em] font-semibold" style={{ color: "var(--cyan)" }}>Practices</p>
       <h1 className="font-display text-2xl mt-2">Things to do, right now.</h1>
-      <p className="mt-2 text-sm" style={{ color: "var(--dim)" }}>Short, practical, and tuned to how you&apos;re wired. Suggested for now: <b style={{ color: "var(--ice)" }}>{RESET_MODES.find(m => m.key === suggested)?.name}</b>.</p>
+      <p className="mt-2 text-sm" style={{ color: "var(--dim)" }}>Short, practical, and tuned to how you&apos;re wired.</p>
 
-      <p className="text-[10px] uppercase tracking-widest mt-7 mb-3" style={{ color: "var(--faint)" }}>Breathing resets</p>
+      <a href="/ritual" className="gcard mt-6 flex items-center justify-between" style={{ textDecoration: "none", borderColor: "rgba(34,229,255,.4)" }}>
+        <div className="flex items-center gap-3">
+          <span className="tile-orb" style={{ width: 32, height: 32 }} />
+          <div>
+            <b className="font-display text-base block">The ReJoovia Reset</b>
+            <span className="text-xs" style={{ color: "var(--faint)" }}>Your signature daily ritual · 6 phases · ~3 min</span>
+          </div>
+        </div>
+        <span style={{ color: "var(--cyan)" }}>➜</span>
+      </a>
+
+      <p className="text-[10px] uppercase tracking-widest mt-7 mb-3" style={{ color: "var(--faint)" }}>Quick breathing resets</p>
       <div className="grid grid-cols-2 gap-3">
         {RESET_MODES.map((m) => (
           <a key={m.key} href={`/reset?mode=${m.key}`} className="gcard" style={{ textDecoration: "none",
