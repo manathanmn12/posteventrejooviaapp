@@ -86,3 +86,60 @@ export function levelFor(checkins: number) {
   if (checkins >= 7) return { lvl: 2, name: "Patterns" };
   return { lvl: 1, name: "Surface" };
 }
+
+// ---- Reset ritual (breathing) — type-personalized open/close ----
+export const RESET_INTRO: Record<string, string> = {
+  Generator: "Let your body lead. As you breathe, notice what feels like a yes.",
+  "Manifesting Generator": "You move fast — this is permission to slow to one thing: your breath.",
+  Projector: "You don't have to earn this rest. Let the air come to you.",
+  Manifestor: "Nothing to initiate here. Just let the breath move on its own.",
+  Reflector: "Let the room settle. For these minutes, only your own rhythm matters.",
+};
+export const RESET_CLOSE: Record<string, string> = {
+  Generator: "Carry that yes with you. Spend your energy where it lit up.",
+  "Manifesting Generator": "One track at a time today. You just proved you can.",
+  Projector: "Guard this calm. Step back in only where you're invited.",
+  Manifestor: "Move when you're ready — and let one person know before you do.",
+  Reflector: "Notice whose energy you pick up next. You get to choose your room.",
+};
+
+// ---- Decision Helper — process keyed to inner Authority ----
+export const DECISION_GUIDE: Record<string, { headline: string; steps: string[] }> = {
+  Emotional: { headline: "Your clarity rides a wave — don't decide at the peak or the pit.",
+    steps: ["Name the decision out loud, then set it down.", "Sleep on it — let one full emotional cycle pass.",
+      "Re-read it tomorrow: does it still feel true when you're neutral?", "If it's a yes on the calm days too, move."] },
+  Sacral: { headline: "Your gut answers in the moment — make it a yes/no question.",
+    steps: ["Rephrase it so the answer is yes or no.", "Ask it out loud and listen for the gut sound, not the head.",
+      "Trust the immediate response — the first one.", "If there's no clear gut yes, it's a no for now."] },
+  Splenic: { headline: "Your knowing is quiet and instant — it speaks once.",
+    steps: ["Get still and ask once.", "Catch the very first impression — it won't repeat.",
+      "Don't argue it into the ground.", "Act on the quiet signal, not the loud fear."] },
+  Ego: { headline: "Only commit to what you have the will and want to finish.",
+    steps: ["Ask: do I actually want this — for me?", "Check your capacity honestly, not your guilt.",
+      "If your heart's not in it, decline cleanly.", "Promise only what you'll keep."] },
+  "Self-Projected": { headline: "You hear your truth in your own voice — talk it out.",
+    steps: ["Call someone you trust and think out loud.", "Listen to what YOU say, not their advice.",
+      "Notice where your voice lifts vs. flattens.", "Decide from the direction that sounded like you."] },
+  Mental: { headline: "Clarity is conversational — sound it out in the right places.",
+    steps: ["Talk it through with a few trusted people.", "Notice the environment where it gets clear.",
+      "Don't decide in the room — let it settle after.", "Choose once the noise quiets."] },
+  Lunar: { headline: "Time is your authority — give the big ones a full cycle.",
+    steps: ["Name it, then deliberately wait.", "Revisit it across ~28 days and different rooms.",
+      "Watch how it reads in each mood and place.", "Decide only once it's stayed consistent."] },
+};
+
+// ---- Event Mode — pre/post rituals for the days they run an event ----
+export const EVENT_PRE: Record<string, string> = {
+  Generator: "You're the engine of this room. Before doors open, find the part you're genuinely excited to do — lead from there.",
+  "Manifesting Generator": "You'll juggle ten things today. Pick the ONE that must go right, anchor to it, let the rest flow.",
+  Projector: "Don't run the floor on raw push. Position yourself to be seen, guide the key people, and let others carry the load.",
+  Manifestor: "Set the tone early. Brief your team on the plan before it starts so your moves never blindside them.",
+  Reflector: "You'll feel this whole room. Walk it once while it's empty, set your baseline, so you can read what shifts.",
+};
+export const EVENT_POST: Record<string, string> = {
+  Generator: "You gave real energy today. Don't immediately refill the calendar — let your body empty out first.",
+  "Manifesting Generator": "You moved fast for hours. Pick one slow thing tonight; let your system catch up to you.",
+  Projector: "You held a lot of people in focus. That's expensive for you — protect tomorrow morning, no early asks.",
+  Manifestor: "The push is done. Stop initiating for the night; let yourself land before the next thing.",
+  Reflector: "You absorbed everyone's day. Change your environment, shed what isn't yours, and re-rate how you actually feel.",
+};

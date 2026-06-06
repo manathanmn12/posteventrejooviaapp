@@ -84,6 +84,42 @@ export async function signOut() {
   try { await createClient().auth.signOut(); } catch { /* local mode has no session */ }
   localStorage.removeItem(KEY);
   localStorage.removeItem(MODE);
+  localStorage.removeItem(ACT);
+}
+
+// ---- Engagement activity (resets / decisions / events) — lightweight, localStorage in both modes ----
+const ACT = "rj_activity_v1";
+export type Activity = { resets: number; decisions: number; events: number; eventPre: number; eventPost: number };
+const ZERO: Activity = { resets: 0, decisions: 0, events: 0, eventPre: 0, eventPost: 0 };
+
+export function getActivity(): Activity {
+  try { return { ...ZERO, ...JSON.parse(localStorage.getItem(ACT) || "") }; } catch { return { ...ZERO }; }
+}
+export function logActivity(kind: "reset" | "decision" | "event-pre" | "event-post") {
+  const a = getActivity();
+  if (kind === "reset") a.resets++;
+  if (kind === "decision") a.decisions++;
+  if (kind === "event-pre") { a.events++; a.eventPre++; }
+  if (kind === "event-post") { a.events++; a.eventPost++; }
+  localStorage.setItem(ACT, JSON.stringify(a));
+  return a;
+}
+
+export type Badge = { key: string; name: string; desc: string; earned: boolean };
+export function computeBadges(checkins: number, streak: number, a: Activity): Badge[] {
+  return [
+    { key: "first-breath", name: "First Breath", desc: "Complete your first reset", earned: a.resets >= 1 },
+    { key: "streak-3", name: "3-Day Rhythm", desc: "Check in 3 days running", earned: streak >= 3 },
+    { key: "streak-7", name: "7-Day Rhythm", desc: "Check in 7 days running", earned: streak >= 7 },
+    { key: "clear-decision", name: "Clear Decision", desc: "Run a choice through your design", earned: a.decisions >= 1 },
+    { key: "event-ready", name: "Event Ready", desc: "Ground before running an event", earned: a.eventPre >= 1 },
+    { key: "recovered", name: "Recovered", desc: "Reset after an event", earned: a.eventPost >= 1 },
+    { key: "energy-aware", name: "Energy Aware", desc: "Reach 7 check-ins", earned: checkins >= 7 },
+    { key: "pattern-spotter", name: "Pattern Spotter", desc: "Reach 14 check-ins", earned: checkins >= 14 },
+  ];
+}
+export function xpTotal(checkins: number, a: Activity) {
+  return checkins * 10 + a.resets * 5 + a.decisions * 5 + a.events * 15;
 }
 
 export async function submitCheckin(p: {

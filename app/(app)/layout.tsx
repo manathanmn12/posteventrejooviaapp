@@ -5,9 +5,9 @@ import { ensureSession } from "@/lib/store";
 
 const nav = [
   ["Today", "/today"],
+  ["Reset", "/reset"],
   ["Report", "/report"],
-  ["Journal", "/journal"],
-  ["Coach", "/coach"],
+  ["Wins", "/wins"],
   ["Settings", "/settings"],
 ] as const;
 

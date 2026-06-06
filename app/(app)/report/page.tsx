@@ -10,6 +10,7 @@ export default function Report() {
     getState().then(setS);
   }, []);
   const checkins = s?.checkin_count ?? 0;
+  const nextGate = [3, 7, 14, 21, 30].find((g) => checkins < g);
   const unlocked = CHAPTERS.filter((c) => checkins >= c.gate).length;
   const newest = CHAPTERS.filter((c) => checkins >= c.gate).slice(-1)[0]?.n;
   const chap = open != null ? CHAPTERS.find((c) => c.n === open) : null;
@@ -48,7 +49,24 @@ export default function Report() {
       <button className="cta w-full mt-6" disabled={unlocked < CHAPTERS.length}>
         {unlocked < CHAPTERS.length ? `PDF unlocks with chapter ${CHAPTERS.length}` : "Download your report (PDF)"}
       </button>
-      <p className="mt-4 text-[11px]" style={{ color: "var(--faint)" }}>
+
+      {/* Continue the journey — no dead end */}
+      <p className="text-[10px] uppercase tracking-[0.26em] mt-9 mb-3" style={{ color: "var(--faint)" }}>Keep going</p>
+      <div className="space-y-3">
+        <a href="/today/checkin" className="gcard flex items-center justify-between" style={{ textDecoration: "none" }}>
+          <div><b className="font-display text-sm block">Today&apos;s check-in</b>
+            <span className="text-[11px]" style={{ color: "var(--faint)" }}>
+              {nextGate ? `${nextGate - checkins} more until your next chapter` : "keep your streak alive"}</span></div>
+          <span className="xp-chip">+10 XP</span>
+        </a>
+        <a href="/reset" className="gcard flex items-center justify-between" style={{ textDecoration: "none" }}>
+          <div><b className="font-display text-sm block">Take a reset</b>
+            <span className="text-[11px]" style={{ color: "var(--faint)" }}>2-minute breath, on us</span></div>
+          <span className="tile-orb" style={{ width: 26, height: 26 }} />
+        </a>
+      </div>
+
+      <p className="mt-6 text-[11px]" style={{ color: "var(--faint)" }}>
         Your design is a reflection tool, not a prescription — and never a measure of ability.
       </p>
 

@@ -89,3 +89,12 @@ body{background:var(--navy);color:var(--ice)}
 
 @media (prefers-reduced-motion: reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
 input[type=range]{accent-color:#22E5FF}
+
+/* tools launchpad tiles */
+.tile{display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center;text-decoration:none;
+  background:var(--glass);border:1px solid var(--stroke);border-radius:18px;padding:16px 8px;backdrop-filter:blur(8px);transition:border-color .2s,transform .15s}
+.tile:active{transform:scale(.97)}
+.tile b{font-family:var(--font-grotesk);font-size:13px;color:var(--ice)}
+.tile span{font-size:10px;color:var(--faint)}
+.tile-ic{width:34px;height:34px;border-radius:11px;border:1.5px solid;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700}
+.tile-orb{width:34px;height:34px;border-radius:50%;background:radial-gradient(circle at 38% 32%,rgba(140,255,240,.95),var(--teal) 45%,rgba(34,229,255,.85) 75%);box-shadow:0 0 18px rgba(34,229,255,.4)}

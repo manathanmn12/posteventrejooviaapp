@@ -35,7 +35,32 @@ export default function Today() {
         {s?.today_done && <p className="mt-5 text-sm" style={{ color: "var(--teal)" }}>✓ Today&apos;s check-in is in — see you tomorrow.</p>}
       </div>
 
-      <div className="mt-8 space-y-4">
+      {/* Tools — the launchpad */}
+      <p className="text-[10px] uppercase tracking-[0.26em] mt-9 mb-3" style={{ color: "var(--faint)" }}>Your tools</p>
+      <div className="grid grid-cols-3 gap-3">
+        <a href="/reset" className="tile">
+          <span className="tile-orb" />
+          <b>Reset</b><span>2-min breath</span>
+        </a>
+        <a href="/decide" className="tile">
+          <span className="tile-ic" style={{ borderColor: "rgba(34,229,255,.4)", color: "var(--cyan)" }}>?</span>
+          <b>Decide</b><span>run a choice</span>
+        </a>
+        <a href="/event" className="tile">
+          <span className="tile-ic" style={{ borderColor: "rgba(255,209,102,.4)", color: "var(--gold)" }}>◆</span>
+          <b>Event</b><span>prep / recover</span>
+        </a>
+      </div>
+
+      <a href="/wins" className="gcard mt-4 flex items-center justify-between" style={{ textDecoration: "none" }}>
+        <div>
+          <p className="text-[10px] uppercase tracking-widest" style={{ color: "var(--gold)" }}>Your wins</p>
+          <p className="text-sm mt-1" style={{ color: "var(--dim)" }}>Streak, badges & level →</p>
+        </div>
+        <span className="streak-chip"><b>{s?.streak?.current ?? 0}</b></span>
+      </a>
+
+      <div className="mt-6 space-y-4">
         <div className="gcard">
           <div className="gcard-label"><span>Today&apos;s run</span><span style={{ color: "var(--teal)" }}>{s?.today_done ? "1/2" : "0/2"} DONE</span></div>
           <a href="/today/checkin" className={`run-row ${s?.today_done ? "done" : ""}`}>
