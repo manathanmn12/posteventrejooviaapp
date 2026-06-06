@@ -22,7 +22,9 @@ function readLocal(): Local {
   catch { return { checkins: [], streak: 0, longest: 0 }; }
 }
 function writeLocal(l: Local) { localStorage.setItem(KEY, JSON.stringify(l)); }
-function mode() { return localStorage.getItem(MODE); }
+// Default to LOCAL unless cloud is explicitly confirmed — never block/hang on an unconfirmed session.
+function isCloud() { return localStorage.getItem(MODE) === "cloud"; }
+function ensureLocalSeed() { if (!localStorage.getItem(KEY)) writeLocal({ checkins: [], streak: 0, longest: 0 }); }
 const todayISO = () => new Date().toISOString().slice(0, 10);
 
 export type AppState = {
@@ -34,50 +36,44 @@ export type AppState = {
   mode?: "cloud" | "local";
 };
 
-// Establish a session (anonymous cloud, or local fallback). Safe to call repeatedly.
+// Establish a session. Guarantees a usable LOCAL session immediately (synchronous),
+// then tries to upgrade to a real anonymous cloud session in the background without blocking.
 export async function ensureSession() {
-  const sb = createClient();
-  const { data } = await sb.auth.getSession();
-  if (data.session) {
-    await sb.rpc("rj_ensure_user");
-    localStorage.setItem(MODE, "cloud");
-    return;
-  }
-  const { error } = await sb.auth.signInAnonymously();
-  if (!error) {
-    await sb.rpc("rj_ensure_user");
-    localStorage.setItem(MODE, "cloud");
-    return;
-  }
-  // anonymous disabled → local mode
-  localStorage.setItem(MODE, "local");
-  if (!localStorage.getItem(KEY)) writeLocal({ checkins: [], streak: 0, longest: 0 });
+  ensureLocalSeed();
+  if (!localStorage.getItem(MODE)) localStorage.setItem(MODE, "local");
+  try {
+    const sb = createClient();
+    const { data } = await sb.auth.getSession();
+    if (data.session) { await sb.rpc("rj_ensure_user"); localStorage.setItem(MODE, "cloud"); return; }
+    const { error } = await sb.auth.signInAnonymously();
+    if (!error) { await sb.rpc("rj_ensure_user"); localStorage.setItem(MODE, "cloud"); }
+  } catch { /* stay local — never block the journey on auth */ }
 }
 
 export async function saveChart(chart: Record<string, unknown>) {
-  if (mode() === "local") {
-    const l = readLocal();
-    l.hd = chart as HD;
-    writeLocal(l);
-    return;
-  }
-  await createClient().rpc("rj_save_chart", { p: chart });
+  const writeLocalChart = () => { ensureLocalSeed(); const l = readLocal(); l.hd = chart as HD; writeLocal(l); };
+  if (!isCloud()) { writeLocalChart(); return; }
+  try {
+    const { error } = await createClient().rpc("rj_save_chart", { p: chart });
+    if (error) writeLocalChart(); // cloud rejected → keep the journey moving locally
+  } catch { writeLocalChart(); }
 }
 
 export async function getState(): Promise<AppState> {
-  if (mode() === "local") {
+  const localState = (): AppState => {
     const l = readLocal();
     return {
-      user: { display_name: l.display_name },
-      hd: l.hd,
+      user: { display_name: l.display_name }, hd: l.hd,
       streak: { current: l.streak, longest: l.longest },
-      checkin_count: l.checkins.length,
-      today_done: l.last === todayISO(),
-      mode: "local",
+      checkin_count: l.checkins.length, today_done: l.last === todayISO(), mode: "local",
     };
-  }
-  const { data } = await createClient().rpc("rj_get_state");
-  return { ...(data ?? {}), mode: "cloud" };
+  };
+  if (!isCloud()) return localState();
+  try {
+    const { data, error } = await createClient().rpc("rj_get_state");
+    if (error || !data) return localState();
+    return { ...data, mode: "cloud" };
+  } catch { return localState(); }
 }
 
 export async function signOut() {
@@ -149,7 +145,8 @@ export async function submitCheckin(p: {
   p_energy: number; p_stress: number; p_clarity: number; p_decision: number; p_reflection: string;
 }) {
   recordHistory({ date: todayISO(), energy: p.p_energy, stress: p.p_stress, clarity: p.p_clarity, decision: p.p_decision });
-  if (mode() === "local") {
+  const writeLocalCheckin = () => {
+    ensureLocalSeed();
     const l = readLocal();
     const t = todayISO();
     if (l.last !== t) {
@@ -160,7 +157,10 @@ export async function submitCheckin(p: {
       if (!l.checkins.includes(t)) l.checkins.push(t);
       writeLocal(l);
     }
-    return;
-  }
-  await createClient().rpc("rj_submit_checkin", p);
+  };
+  if (!isCloud()) { writeLocalCheckin(); return; }
+  try {
+    const { error } = await createClient().rpc("rj_submit_checkin", p);
+    if (error) writeLocalCheckin();
+  } catch { writeLocalCheckin(); }
 }

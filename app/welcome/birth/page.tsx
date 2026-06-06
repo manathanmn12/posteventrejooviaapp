@@ -17,27 +17,34 @@ export default function Birth() {
   useEffect(() => { ensureSession(); }, []); // instant session, no email
 
   async function save(chart: Record<string, unknown>) {
-    try {
-      await saveChart({ birth_date: date, birth_time: unknown ? "12:00" : time,
-        time_estimated: unknown, birth_city: city, ...chart });
-      r.push("/welcome/reveal");
-    } catch (e) { setErr(String(e)); setBusy(false); }
+    await ensureSession(); // guarantee a session exists before we save
+    await saveChart({ birth_date: date, birth_time: unknown ? "12:00" : time,
+      time_estimated: unknown, birth_city: city, ...chart });
+    r.push("/welcome/reveal"); // saveChart never throws now — always advance
   }
 
   async function compute() {
     setBusy(true); setErr("");
-    const res = await fetch("/api/hd-chart", {
-      method: "POST", headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ date, time, city, timeKnown: !unknown }),
-    });
-    if (res.ok) { await save(await res.json()); }
-    else { setFallback(true); setBusy(false); }
+    try {
+      const ctrl = new AbortController();
+      const t = setTimeout(() => ctrl.abort(), 15000); // don't spin forever
+      const res = await fetch("/api/hd-chart", {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ date, time, city, timeKnown: !unknown }),
+        signal: ctrl.signal,
+      });
+      clearTimeout(t);
+      if (res.ok) { await save(await res.json()); return; }
+    } catch { /* fall through to the type picker */ }
+    setFallback(true); setBusy(false);
   }
 
   async function pickType(t: string) {
     setBusy(true);
-    await save({ hd_type: t, strategy: STRATEGY[t], authority: "Emotional", profile: "1/4",
-      time_estimated: true, api_source: "manual-demo" });
+    try {
+      await save({ hd_type: t, strategy: STRATEGY[t], authority: "Emotional", profile: "1/4",
+        time_estimated: true, api_source: "manual-demo" });
+    } catch (e) { setErr(String(e)); setBusy(false); }
   }
 
   return (
